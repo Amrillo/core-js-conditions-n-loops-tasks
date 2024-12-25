@@ -267,8 +267,27 @@ function isContainNumber(num, digit) {
  *  [2, 3, 9, 5] => 2       => 2 + 3 === 5 then balance element is 9 and its index = 2
  *  [1, 2, 3, 4, 5] => -1   => no balance element
  */
-function getBalanceIndex(/* arr */) {
-  throw new Error('Not implemented');
+function getBalanceIndex(arr) {
+  const len = arr.length;
+
+  for (let i = 0; i < len; i += 1) {
+    let leftSum = 0;
+    let rightSum = 0;
+
+    for (let left = 0; left < i; left += 1) {
+      leftSum += arr[left];
+    }
+
+    for (let right = i + 1; right < len; right += 1) {
+      rightSum += arr[right];
+    }
+
+    if (leftSum === rightSum) {
+      return i;
+    }
+  }
+
+  return -1;
 }
 
 /**
@@ -287,13 +306,61 @@ function getBalanceIndex(/* arr */) {
  *        ]
  *        [
  *          [1,  2,  3,  4],
- *  4  =>   [12, 13, 14, 5],
+*  4  =>    [12, 13, 14, 5],
  *          [11, 16, 15, 6],
  *          [10, 9,  8,  7]
  *        ]
+ *
+
+
  */
-function getSpiralMatrix(/* size */) {
-  throw new Error('Not implemented');
+
+function getSpiralMatrix(size) {
+  const matrix = new Array(size);
+  for (let i = 0; i < size; i += 1) {
+    matrix[i] = new Array(size);
+    for (let j = 0; j < size; j += 1) {
+      matrix[i][j] = 0;
+    }
+  }
+
+  let value = 1;
+  let minRow = 0;
+  let maxRow = size - 1;
+  let minCol = 0;
+  let maxCol = size - 1;
+
+  while (minRow <= maxRow && minCol <= maxCol) {
+    for (let col = minCol; col <= maxCol; col += 1) {
+      matrix[minRow][col] = value;
+      value += 1;
+    }
+    minRow += 1;
+
+    for (let row = minRow; row <= maxRow; row += 1) {
+      matrix[row][maxCol] = value;
+      value += 1;
+    }
+    maxCol -= 1;
+
+    if (minRow <= maxRow) {
+      for (let col = maxCol; col >= minCol; col -= 1) {
+        matrix[maxRow][col] = value;
+        value += 1;
+      }
+      maxRow -= 1;
+    }
+
+    if (minCol <= maxCol) {
+      for (let row = maxRow; row >= minRow; row -= 1) {
+        matrix[row][minCol] = value;
+        value += 1;
+      }
+      minCol += 1;
+    }
+  }
+
+  return matrix;
 }
 
 /**
@@ -306,13 +373,31 @@ function getSpiralMatrix(/* size */) {
  *
  * @example:
  *  [                 [
- *    [1, 2, 3],        [7, 4, 1],
+ *    [1, 2, 3],        [7, 4, 1],                1.1 - 1.3, 1.2- 2.3, 1.3 - 3.3
  *    [4, 5, 6],  =>    [8, 5, 2],
  *    [7, 8, 9]         [9, 6, 3]
  *  ]                 ]
  */
-function rotateMatrix(/* matrix */) {
-  throw new Error('Not implemented');
+function rotateMatrix(matrix) {
+  const arr = matrix;
+  const size = matrix.length;
+  const result = new Array(size);
+
+  for (let i = 0; i < size; i += 1) {
+    result[i] = new Array(size);
+  }
+  for (let i = 0; i < size; i += 1) {
+    for (let j = 0; j < size; j += 1) {
+      result[j][size - 1 - i] = arr[i][j];
+    }
+  }
+  for (let i = 0; i < size; i += 1) {
+    for (let j = 0; j < size; j += 1) {
+      arr[i][j] = result[i][j];
+    }
+  }
+
+  return arr;
 }
 
 /**
@@ -329,8 +414,38 @@ function rotateMatrix(/* matrix */) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+function sortByAsc(arr) {
+  const copyArr = arr;
+
+  function partition(low, high) {
+    const pivot = copyArr[high];
+    let i = low - 1;
+
+    for (let j = low; j < high; j += 1) {
+      if (copyArr[j] <= pivot) {
+        i += 1;
+        const temp = copyArr[i];
+        copyArr[i] = copyArr[j];
+        copyArr[j] = temp;
+      }
+    }
+    const temp = copyArr[i + 1];
+    copyArr[i + 1] = copyArr[high];
+    copyArr[high] = temp;
+
+    return i + 1;
+  }
+
+  function quickSortRecursive(low, high) {
+    if (low < high) {
+      const pi = partition(low, high);
+      quickSortRecursive(low, pi - 1);
+      quickSortRecursive(pi + 1, high);
+    }
+  }
+
+  quickSortRecursive(0, copyArr.length - 1);
+  return copyArr;
 }
 
 /**
@@ -350,8 +465,25 @@ function sortByAsc(/* arr */) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(/* str, iterations */) {
-  throw new Error('Not implemented');
+function shuffleChar(str, iterations) {
+  const len = str.length;
+  let res = str;
+
+  for (let iter = 0; iter < iterations; iter += 1) {
+    let evens = '';
+    let odds = '';
+
+    for (let i = 0; i < len; i += 1) {
+      if (i % 2 === 0) {
+        evens += res[i];
+      } else {
+        odds += res[i];
+      }
+    }
+    res = evens + odds;
+  }
+
+  return result;
 }
 
 /**
@@ -360,8 +492,8 @@ function shuffleChar(/* str, iterations */) {
  * Usage of String class methods is not allowed in this task.
  *
  * @example:
- * 12345    => 12354
- * 123450   => 123504
+ * 12345    => 12354        12354, 12543,
+ * 123450   => 123504   123405, 123054
  * 12344    => 12434
  * 123440   => 124034
  * 1203450  => 1203504
