@@ -152,30 +152,59 @@ function convertToRomanNumerals(num) {
  *  '1950.2'  => 'one nine five zero point two'
  */
 function convertNumberToString(num) {
-  const numbers = {
-    0: 'zero',
-    1: 'one',
-    2: 'two',
-    3: 'three',
-    4: 'four',
-    5: 'five',
-    6: 'six',
-    7: 'seven',
-    8: 'eight',
-    9: 'nine',
-    ',': 'point',
-    '.': 'point',
-    '-': 'minus',
-  };
-  const numArray = Array.from(num);
-  const res = numArray.reduce((acc, digit, index) => {
-    const word = numbers[digit];
-    if (index > 0) {
-      return `${acc} ${word}`;
-    }
-    return word;
-  }, '');
+  const str = num;
+  let res = '';
 
+  for (let i = 0; i < str.length; i += 1) {
+    const char = str[i];
+    let word;
+    switch (char) {
+      case '0':
+        word = 'zero';
+        break;
+      case '1':
+        word = 'one';
+        break;
+      case '2':
+        word = 'two';
+        break;
+      case '3':
+        word = 'three';
+        break;
+      case '4':
+        word = 'four';
+        break;
+      case '5':
+        word = 'five';
+        break;
+      case '6':
+        word = 'six';
+        break;
+      case '7':
+        word = 'seven';
+        break;
+      case '8':
+        word = 'eight';
+        break;
+      case '9':
+        word = 'nine';
+        break;
+      case ',':
+      case '.':
+        word = 'point';
+        break;
+      case '-':
+        word = 'minus';
+        break;
+      default:
+        word = '';
+    }
+    if (i === 0) {
+      res += word;
+    } else {
+      res += ` ${word}`;
+    }
+  }
   return res;
 }
 
@@ -483,7 +512,7 @@ function shuffleChar(str, iterations) {
     res = evens + odds;
   }
 
-  return result;
+  return res;
 }
 
 /**
@@ -497,14 +526,43 @@ function shuffleChar(str, iterations) {
  * 12344    => 12434
  * 123440   => 124034
  * 1203450  => 1203504
- * 90822    => 92028
+ * 90822    => 92028  90282
  * 321321   => 322113
  *
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  let num = number;
+  const digits = [];
+  while (num > 0) {
+    digits.push(num % 10);
+    num = Math.floor(num / 10);
+  }
+  digits.reverse();
+  let i = digits.length - 2;
+  while (i >= 0 && digits[i] >= digits[i + 1]) {
+    i -= 1;
+  }
+  if (i === -1) {
+    return digits.reduce((acc, digit) => acc * 10 + digit, 0);
+  }
+
+  let j = digits.length - 1;
+  while (digits[j] <= digits[i]) {
+    j -= 1;
+  }
+
+  [digits[i], digits[j]] = [digits[j], digits[i]];
+
+  let left = i + 1;
+  let right = digits.length - 1;
+  while (left < right) {
+    [digits[left], digits[right]] = [digits[right], digits[left]];
+    left += 1;
+    right -= 1;
+  }
+  return digits.reduce((acc, digit) => acc * 10 + digit, 0);
 }
 
 module.exports = {
